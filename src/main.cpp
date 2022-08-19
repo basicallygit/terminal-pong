@@ -1,7 +1,22 @@
+#ifdef __unix__
+
+#include <stdlib.h>
+#define WINDOWS 0
+#define CLEAR "clear"
+
+#elif defined(_WIN32) || defined(WIN32)
+
+#include <windows.h>
+#define WINDOWS 1
+#define CLEAR "cls"
+
+#endif
+
 #include <iostream>
 #include <io.h>
 #include <fcntl.h>
-#include <windows.h>
+#include <string>
+#include <ctime>
 
 using namespace std;
 
@@ -48,7 +63,7 @@ class Screen {
             }
         }
         void printScrn() {
-            system("cls");
+            system(CLEAR);
             wstring buffer = L"";
             for (int i = 0; i < 10; i++) {
                 for (int j = 0; j < 15; j++) {
@@ -77,7 +92,25 @@ class Game {
     public:
         Screen scrn;
         void mainLoop() {
-
+            //set once and pause for 1 second to allow the player time to think
+            scrn.setPixel(x, y);
+            scrn.setPaddle(paddleX, paddleY1);
+            scrn.setPaddle(paddleX, paddleY2);
+            scrn.setPaddle(paddleX, paddleY3);
+            scrn.setPaddle(paddleX, paddleY4);
+            scrn.printScrn();
+            scrn.removePixel(x, y);
+            scrn.removePixel(paddleX, paddleY1);
+            scrn.removePixel(paddleX, paddleY2);
+            scrn.removePixel(paddleX, paddleY3);
+            scrn.removePixel(paddleX, paddleY4);
+            Sleep(1000);
+            if (rand() % 2 == 0) {
+                down = true;
+            }
+            if (rand() % 2 == 0) {
+                right = false;
+            }
             while (true) {
                 scrn.setPixel(x, y);
                 scrn.setPaddle(paddleX, paddleY1);
@@ -113,7 +146,7 @@ class Game {
             }
         }
         void checkCollision() {
-            if (x == 14 && y == 9 || x == 0 && y == 0 || x == 0 && y == 9 || x == 14 && y == 0) { //corners
+            if (x == 0 && y == 0 || x == 0 && y == 9) { //corners
                 right = !right;
                 down = !down;
             }
@@ -121,7 +154,7 @@ class Game {
                 right = !right;
             }
             else if (x == 14) {
-                system("cls");
+                system(CLEAR);
                 wcout << lose_game;
 
                 Sleep(2000);
@@ -162,7 +195,6 @@ class Game {
         void checkPaddleCollision() {
             if (x == paddleX && y == paddleY1 || x == paddleX && y == paddleY2 || x == paddleX && y == paddleY3) {
                 right = !right;
-                down = !down;
                 scrn.score++;
             }
         }
@@ -175,11 +207,12 @@ class Game {
         uint8_t x = 4;
         uint8_t y = rand() % 8 + 1;
         bool right = true;
-        bool down = true;
+        bool down = false;
 };
 
 
 int main() {
+    srand((unsigned)time(NULL));
     cout << "Press enter to start" << endl;
     getchar();
     //hide the cursor
