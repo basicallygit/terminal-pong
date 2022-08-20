@@ -47,7 +47,7 @@ L"   ██     ██████   ██████      ██████�
 
 class Screen {
     private:
-        wstring screen[10][15];
+        wstring screen[10][16];
 
     public:
         int score = 0;
@@ -57,7 +57,7 @@ class Screen {
 
             //initialize screen with empty spaces
             for (int i = 0; i < 10; i++) {
-                for (int j = 0; j < 15; j++) {
+                for (int j = 0; j < 16; j++) {
                     screen[i][j] = L"  ";
                 }
             }
@@ -66,7 +66,7 @@ class Screen {
             system(CLEAR);
             wstring buffer = L"";
             for (int i = 0; i < 10; i++) {
-                for (int j = 0; j < 15; j++) {
+                for (int j = 0; j < 16; j++) {
                     buffer += screen[i][j];
                 }
                 buffer += L"\n";
@@ -107,9 +107,6 @@ class Game {
             Sleep(1000);
             if (rand() % 2 == 0) {
                 down = true;
-            }
-            if (rand() % 2 == 0) {
-                right = false;
             }
             while (true) {
                 scrn.setPixel(x, y);
@@ -153,7 +150,7 @@ class Game {
             else if (x == 0) { //left wall
                 right = !right;
             }
-            else if (x == 14) {
+            else if (x == 16) {
                 system(CLEAR);
                 wcout << lose_game;
 
@@ -199,14 +196,14 @@ class Game {
             }
         }
     private:
-        uint8_t paddleX = 12;
+        uint8_t paddleX = 14;
         uint8_t paddleY1 = 5;
         uint8_t paddleY2 = 6;
         uint8_t paddleY3 = 7;
         uint8_t paddleY4 = 8;
         uint8_t x = 4;
         uint8_t y = rand() % 8 + 1;
-        bool right = true;
+        bool right = false;
         bool down = false;
 };
 
@@ -215,19 +212,25 @@ int main() {
     srand((unsigned)time(NULL));
     cout << "Press enter to start" << endl;
     getchar();
-    //hide the cursor
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    CONSOLE_CURSOR_INFO hCCI;
-    hCCI.dwSize = 100;
-    hCCI.bVisible = FALSE;
-    SetConsoleCursorInfo(hConsole, &hCCI);
 
-    Game game;
-    game.mainLoop();
+    if (WINDOWS) {
+        //hide the cursor
+        HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+        CONSOLE_CURSOR_INFO hCCI;
+        hCCI.dwSize = 100;
+        hCCI.bVisible = FALSE;
+        SetConsoleCursorInfo(hConsole, &hCCI);
 
-    //show the cursor
-    hCCI.bVisible = TRUE;
-    SetConsoleCursorInfo(hConsole, &hCCI);
+        Game game;
+        game.mainLoop();
+
+        //show the cursor
+        hCCI.bVisible = TRUE;
+        SetConsoleCursorInfo(hConsole, &hCCI);
+    } else {
+        Game game;
+        game.mainLoop();
+    }
 
     return 0;
 }
