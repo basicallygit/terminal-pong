@@ -1,17 +1,5 @@
-#ifdef __unix__
-
-#include <stdlib.h>
-#define WINDOWS 0
-#define CLEAR "clear"
-
-#elif defined(_WIN32) || defined(WIN32)
-
 #include <windows.h>
-#define WINDOWS 1
 #define CLEAR "cls"
-
-#endif
-
 #include <iostream>
 #include <io.h>
 #include <fcntl.h>
@@ -213,24 +201,18 @@ int main() {
     cout << "Press enter to start" << endl;
     getchar();
 
-    if (WINDOWS) {
-        //hide the cursor
-        HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-        CONSOLE_CURSOR_INFO hCCI;
-        hCCI.dwSize = 100;
-        hCCI.bVisible = FALSE;
-        SetConsoleCursorInfo(hConsole, &hCCI);
+    //hide the cursor
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_CURSOR_INFO hCCI;
+    hCCI.dwSize = 100;
+    hCCI.bVisible = FALSE;
+    SetConsoleCursorInfo(hConsole, &hCCI);
+    Game game;
+    game.mainLoop();
 
-        Game game;
-        game.mainLoop();
-
-        //show the cursor
-        hCCI.bVisible = TRUE;
-        SetConsoleCursorInfo(hConsole, &hCCI);
-    } else {
-        Game game;
-        game.mainLoop();
-    }
-
+    //show the cursor
+    hCCI.bVisible = TRUE;
+    SetConsoleCursorInfo(hConsole, &hCCI);
+  
     return 0;
 }
