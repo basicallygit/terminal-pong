@@ -178,7 +178,7 @@ class Game {
 
         }
         void checkPaddleCollision() {
-            if (x == paddleX && y == paddleY1 || x == paddleX && y == paddleY2 || x == paddleX && y == paddleY3) {
+            if (x == paddleX && (y == paddleY1 || y == paddleY2 || y == paddleY3 || y == paddleY4)) {
                 right = !right;
                 scrn.score++;
             }
